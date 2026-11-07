@@ -1,0 +1,112 @@
+name: Prepare signed draft release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag matching config/product.env (for example v26.1.0)
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: signed-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.repository == 'Albort12138/wordnest' && github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    environment: release
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ inputs.tag }}
+    steps:
+      - name: Validate release request
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'An existing vYY.FEATURE.FIX tag is required.' >&2; exit 2; }
+          test "$(uname -m)" = arm64
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require tagged code to belong to reviewed main before executing repository code
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          tagged_commit="$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")"
+          test "$(git rev-parse HEAD)" = "$tagged_commit"
+          git merge-base --is-ancestor "$tagged_commit" refs/remotes/origin/main || { echo 'Release tag is not part of origin/main.' >&2; exit 2; }
+          git merge-base --is-ancestor "$tagged_commit" "$GITHUB_SHA" || { echo 'Release tag is newer than, or outside, the trusted main revision used to dispatch this workflow.' >&2; exit 2; }
+      - name: Validate tagged version and local checks
+        run: |
+          set -euo pipefail
+          source config/product.env
+          test "$RELEASE_TAG" = "v$WORDNEST_VERSION"
+          for script in scripts/*.sh; do bash -n "$script"; done
+          bash scripts/check-source-policy.sh
+          bash scripts/export-source.sh --check-only
+          bash scripts/test.sh
+      - name: Import certificate into an ephemeral keychain
+        shell: bash
+        env:
+          DEVELOPER_ID_P12_BASE64: ${{ secrets.DEVELOPER_ID_P12_BASE64 }}
+          DEVELOPER_ID_P12_PASSWORD: ${{ secrets.DEVELOPER_ID_P12_PASSWORD }}
+          DEVELOPER_ID_APPLICATION: ${{ secrets.DEVELOPER_ID_APPLICATION }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          for name in DEVELOPER_ID_P12_BASE64 DEVELOPER_ID_P12_PASSWORD DEVELOPER_ID_APPLICATION APPLE_ID APPLE_TEAM_ID APPLE_APP_PASSWORD; do
+            [[ -n "${!name}" ]] || { echo "Missing required release secret: $name" >&2; exit 2; }
+          done
+          [[ "$DEVELOPER_ID_APPLICATION" == 'Developer ID Application: '* ]] || { echo 'A Developer ID Application identity is required.' >&2; exit 2; }
+          keychain_password="$(uuidgen)"
+          echo "::add-mask::$keychain_password"
+          keychain="$RUNNER_TEMP/wordnest-release.keychain-db"
+          certificate="$RUNNER_TEMP/wordnest-developer-id.p12"
+          printf '%s' "$DEVELOPER_ID_P12_BASE64" | base64 --decode > "$certificate"
+          chmod 600 "$certificate"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$certificate" -P "$DEVELOPER_ID_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security -t cert -f pkcs12 -k "$keychain" >/dev/null 2>&1
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$keychain_password" "$keychain" >/dev/null 2>&1
+          security list-keychains -d user -s "$keychain"
+          security default-keychain -d user -s "$keychain"
+          rm -f "$certificate"
+          xcrun notarytool store-credentials WordNestRelease --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD" --keychain "$keychain" >/dev/null
+      - name: Build, notarize, staple, verify and package
+        env:
+          SUBTITLE_LOOKUP_SIGNING_IDENTITY: ${{ secrets.DEVELOPER_ID_APPLICATION }}
+          WORDNEST_NOTARY_PROFILE: WordNestRelease
+        run: bash scripts/release.sh
+      - name: Create draft GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          source config/product.env
+          cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          WordNest for Apple Silicon Macs running macOS 14 or later.
+
+          Download the DMG, drag WordNest to Applications, and complete the first-run setup. The ZIP is an alternative package of the same app. See README for privacy and feature limitations, and verify the SHA-256 checksums.
+
+          This is a draft. The maintainer must review installation and permission behavior on a clean Mac before publishing.
+          NOTES
+          base="WordNest-$WORDNEST_VERSION-build$WORDNEST_BUILD_NUMBER-macos-$WORDNEST_ARCH"
+          gh release create "$RELEASE_TAG" --draft --verify-tag --title "WordNest $WORDNEST_VERSION" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            "work/releases/$base.dmg" "work/releases/$base.zip" \
+            "work/releases/$base-SHA256SUMS.txt" "work/releases/$base-build-info.txt"
+      - name: Remove signing material
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/wordnest-developer-id.p12"
+          if [[ -f "$RUNNER_TEMP/wordnest-release.keychain-db" ]]; then
+            security delete-keychain "$RUNNER_TEMP/wordnest-release.keychain-db"
+          fi

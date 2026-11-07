@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="590" viewBox="0 0 1200 590" role="img" aria-labelledby="title desc">
+  <title id="title">WordNest: find a word, understand it, keep its context</title>
+  <desc id="desc">Illustrated workflow, not an application screenshot. Point at clarity in a subtitle and press Control Option D. Read a local dictionary definition and click to hear pronunciation. Save the word and original line to Apple Notes, with a source link when available.</desc>
+  <defs>
+    <linearGradient id="paper" x2="1" y2="1"><stop stop-color="#f3f8f6"/><stop offset="1" stop-color="#fbf5e9"/></linearGradient>
+    <linearGradient id="video" x2="1" y2="1"><stop stop-color="#173e40"/><stop offset="1" stop-color="#345e5b"/></linearGradient>
+  </defs>
+  <rect width="1200" height="590" rx="24" fill="url(#paper)"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="42" y="48" fill="#39756c" font-size="12" font-weight="700" letter-spacing="2">WORDNEST / A SMALL LEARNING HABIT</text>
+    <text x="40" y="100" fill="#183d3a" font-size="36" font-weight="700">A word on screen. A place in your vocabulary.</text>
+    <text x="42" y="134" fill="#58716c" font-size="17">Stay with the story. Keep the words that matter to you.</text>
+    <g font-size="13" font-weight="700" letter-spacing="1.2" fill="#39756c">
+      <text x="42" y="181">01 / FIND</text><text x="432" y="181">02 / UNDERSTAND</text><text x="822" y="181">03 / KEEP</text>
+    </g>
+    <g fill="#ffffff" stroke="#d7e3dd"><rect x="40" y="198" width="340" height="320" rx="18"/><rect x="430" y="198" width="340" height="320" rx="18"/><rect x="820" y="198" width="340" height="320" rx="18"/></g>
+    <rect x="56" y="214" width="308" height="182" rx="12" fill="url(#video)"/>
+    <path d="M56 328 Q130 230 208 305 T364 267 L364 396 L56 396Z" fill="#537e70" opacity=".7"/>
+    <path d="M56 360 Q150 310 248 346 T364 318 L364 396 L56 396Z" fill="#85a28a" opacity=".4"/>
+    <circle cx="307" cy="249" r="15" fill="#f3d99a"/>
+    <rect x="71" y="338" width="278" height="40" rx="7" fill="#102e2c"/>
+    <text x="82" y="364" fill="#ffffff" font-size="16">A small step toward</text>
+    <rect x="235" y="345" width="66" height="26" rx="5" fill="#e8c66d"/>
+    <text x="241" y="364" fill="#183d3a" font-size="16" font-weight="700">clarity.</text>
+    <path d="M263 369 L267 393 L273 385 L283 389 L287 383 L277 377 L285 373Z" fill="#ffffff" stroke="#183d3a" stroke-width="1.5"/>
+    <rect x="84" y="420" width="252" height="39" rx="9" fill="#eff5f1"/>
+    <text x="210" y="445" text-anchor="middle" fill="#245d55" font-size="16" font-weight="600">Control + Option + D</text>
+    <text x="210" y="490" text-anchor="middle" fill="#58716c" font-size="15">Point at the word. Press the shortcut.</text>
+    <text x="454" y="229" fill="#58716c" font-size="12" font-weight="600">LOCAL DICTIONARY</text>
+    <text x="454" y="278" fill="#183d3a" font-size="34" font-weight="700">clarity</text>
+    <circle cx="724" cy="265" r="19" fill="#e8f3ec"/>
+    <path d="M714 261 L719 261 L725 256 L725 274 L719 269 L714 269Z M730 259 Q737 265 730 271" fill="none" stroke="#39756c" stroke-width="2" stroke-linejoin="round"/>
+    <text x="454" y="307" fill="#58716c" font-size="14">noun</text>
+    <text x="454" y="341" fill="#183d3a" font-size="18">The quality of being clear.</text>
+    <path d="M454 365 H746" stroke="#e4ebe6"/>
+    <text x="454" y="391" fill="#58716c" font-size="11" font-weight="700" letter-spacing="1">ORIGINAL LINE</text>
+    <text x="454" y="418" fill="#345d55" font-size="17">A small step toward clarity.</text>
+    <rect x="454" y="444" width="292" height="43" rx="9" fill="#27685e"/>
+    <text x="600" y="471" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600">Save to Notes</text>
+    <rect x="844" y="219" width="36" height="38" rx="8" fill="#f8e8ae"/>
+    <path d="M851 231 H873 M851 237 H873 M851 243 H868" stroke="#ac8931" stroke-width="2"/>
+    <text x="892" y="235" fill="#183d3a" font-size="17" font-weight="700">Your vocabulary</text>
+    <text x="892" y="255" fill="#58716c" font-size="12">Apple Notes / C</text>
+    <rect x="844" y="280" width="292" height="57" rx="8" fill="#f1f6f2"/>
+    <text x="856" y="302" fill="#183d3a" font-size="17" font-weight="700">clarity</text>
+    <text x="856" y="323" fill="#58716c" font-size="12">One word. One table row.</text>
+    <rect x="1060" y="295" width="62" height="26" rx="13" fill="#dfebe2"/>
+    <text x="1091" y="312" text-anchor="middle" fill="#245d55" font-size="12" font-weight="700">1 save</text>
+    <g fill="#39756c"><circle cx="851" cy="366" r="3"/><circle cx="851" cy="400" r="3"/><circle cx="851" cy="434" r="3"/></g>
+    <g fill="#345d55" font-size="15"><text x="864" y="371">Original line and definition</text><text x="864" y="405">Source link, when available</text><text x="864" y="439">History of deliberate saves</text></g>
+    <text x="844" y="487" fill="#58716c" font-size="14">Browse in WordNest. Export as JSON.</text>
+    <g fill="#39756c" stroke="#39756c" stroke-width="2"><path d="M393 356 H417 M409 349 L417 356 L409 363" fill="none"/><path d="M783 356 H807 M799 349 L807 356 L799 363" fill="none"/></g>
+    <text x="42" y="558" fill="#39756c" font-size="12" font-weight="700" letter-spacing="1">ON-DEVICE OCR / LOCAL DICTIONARIES / YOUR APPLE NOTES</text>
+    <text x="1158" y="558" text-anchor="end" fill="#75867b" font-size="11">Illustrated workflow · sample content</text>
+  </g>
+</svg>

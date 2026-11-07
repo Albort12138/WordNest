@@ -1,0 +1,33 @@
+name: Build and test
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  macos:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Verify Apple Silicon runner
+        run: test "$(uname -m)" = arm64
+      - name: Check shell syntax and source policy
+        run: |
+          for script in scripts/*.sh; do bash -n "$script"; done
+          bash scripts/check-source-policy.sh
+          bash scripts/export-source.sh --check-only
+          git diff --check
+      - name: Run local logic and fixture tests
+        run: bash scripts/test.sh
+      - name: Build development app
+        run: bash scripts/build.sh --development
+      - name: Run fixed-data UI checks without screen capture or Notes writes
+        run: work/build/WordNest.app/Contents/MacOS/SubtitleLookup --ui-self-test

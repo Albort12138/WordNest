@@ -1,0 +1,59 @@
+name: Bug report
+description: Report a reproducible WordNest problem without sharing private data.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For security vulnerabilities, email albort.yao.xue@gmail.com privately. Review screenshots/logs before attaching them. Do not post private video URLs, vocabulary histories, Notes content or account identifiers.
+  - type: input
+    id: app_version
+    attributes:
+      label: WordNest version and installation source
+      placeholder: "26.1.0 (1), GitHub DMG / source build"
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: macOS version and Mac chip
+      placeholder: "macOS version, Apple M1/M2/M3/..."
+    validations:
+      required: true
+  - type: input
+    id: source_app
+    attributes:
+      label: Source application and display mode
+      description: Specify ordinary Safari tab, Safari Dock webapp, other player, and windowed / player fullscreen / macOS fullscreen.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected feature
+      options:
+        - Screen capture / OCR
+        - Dictionary / pronunciation
+        - Source URL / title
+        - Notes save / counts / readback
+        - Setup / permissions / installation
+        - Interface / other
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps and expected/actual behavior
+      description: Use a public or synthetic example where possible. Include the exact sanitized error message.
+    validations:
+      required: true
+  - type: textarea
+    id: permissions
+    attributes:
+      label: Current permission state and recent changes
+      description: List allowed/denied permissions and whether you recently updated or moved the app. Do not include full system privacy databases or private diagnostic dumps.
+  - type: textarea
+    id: validation
+    attributes:
+      label: Additional observations
+      description: Does it happen on one display or all displays, in fullscreen only, or after a permission change? Attach reviewed screenshots only.

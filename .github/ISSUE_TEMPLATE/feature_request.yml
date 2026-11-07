@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest a focused improvement to the local vocabulary workflow.
+title: "[Feature] "
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: What are you trying to do?
+      description: Describe the learning scenario and current friction.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain how this would help and whether it needs network access, new permissions or a new storage service.
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Current workaround or alternatives

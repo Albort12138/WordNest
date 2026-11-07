@@ -1,0 +1,27 @@
+work/
+dist/
+.DS_Store
+.env
+.env.*
+*.xcuserstate
+xcuserdata/
+
+# Regenerable local build output.
+.build/
+.swiftpm/
+*.dSYM/
+
+# Signing credentials stay outside source control.
+*.p12
+*.pfx
+*.keychain
+*.keychain-db
+*.mobileprovision
+
+# Distributable binaries and additional private-key formats.
+*.app/
+*.dmg
+*.pkg
+*.pem
+*.key
+*.p8
