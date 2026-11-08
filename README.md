@@ -12,13 +12,13 @@ English · [简体中文](README.zh-CN.md)
 
 **Native Swift + AppKit · Apple Silicon · macOS 14+ · Code: MIT / artwork: separate license**
 
-[Try from source](#build-from-source) · [How it works](#how-it-works) · [Explore the code](#repository-map) · [Contribute](CONTRIBUTING.md)
+[Download for Apple Silicon](https://github.com/Albort12138/WordNest/releases/download/v26.1.0/WordNest-26.1.0-build1-macos-arm64-unnotarized.dmg) · [Try from source](#build-from-source) · [How it works](#how-it-works) · [Explore the code](#repository-map) · [Contribute](CONTRIBUTING.md)
 
 WordNest is a free, open-source macOS menu bar app for learning from subtitled videos and on-screen text. Point at a word, press **Control + Option + D**, look up its meaning, hear its pronunciation, and save it with the original line and an available source link.
 
 OCR, dictionary lookup, and speech synthesis run on your Mac. WordNest has no account, backend, cloud translation, or analytics. Your vocabulary lives in Apple Notes.
 
-> **Release status:** The current release candidate is **26.1.0 (build 1)**. The first public installer is being prepared as an **unnotarized, ad-hoc-signed** download. No Apple developer membership is required to build from source. A downloadable release is not published yet.
+> **Public test release:** [**26.1.0 (build 1)**](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0) is available for small-group testing. The installer is **unnotarized and ad-hoc signed**; macOS may block first launch. See the [installation guide](docs/INSTALL.md). No Apple developer membership is required to build from source.
 
 ## See it in the real app
 
@@ -53,7 +53,7 @@ WordNest does not automatically pause videos. Changing subtitles, unclear text, 
 
 ### Download an app
 
-Public installers will be published on [GitHub Releases](https://github.com/Albort12138/wordnest/releases). The first download is pending. Packages ending in `-unnotarized` are ad-hoc signed, **not Developer ID-signed or notarized by Apple**; macOS may block first launch.
+Download [WordNest 26.1.0 Pre-release](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0) from GitHub Releases, or get the [Apple Silicon DMG](https://github.com/Albort12138/WordNest/releases/download/v26.1.0/WordNest-26.1.0-build1-macos-arm64-unnotarized.dmg) directly. Packages ending in `-unnotarized` are ad-hoc signed, **not Developer ID-signed or notarized by Apple**; macOS may block first launch.
 
 1. Download the Apple Silicon `-unnotarized.dmg` and its SHA-256 checksums attached to a published release. Verify the matching checksum.
 2. Open the disk image and drag **WordNest.app** into **Applications**.
@@ -136,7 +136,7 @@ Local settings and a minimal write journal prevent duplicate collections; the jo
 
 | Capability | Current scope |
 | --- | --- |
-| Hardware and OS | Apple Silicon, macOS 14+ build target. Tested during development on M3 with macOS 26; other configurations need validation. |
+| Hardware and OS | Apple Silicon, macOS 14+ build target. The downloaded installer and core workflow were tested on an existing M3 Mac with macOS 26.6.2; clean-machine installation and other configurations need validation. |
 | App interface | System default, Simplified Chinese, or English. App menus, lookup cards, settings, and vocabulary browsing follow this choice; unknown system diagnostics may follow the OS language. |
 | OCR | Automatic or explicit language selection, using languages available through the current macOS Vision installation. |
 | Definitions | Enabled macOS Dictionary resources or a selected imported local MDX 2.x file. Definitions may be monolingual, unavailable, or unsuitable for a specific contextual meaning. Recognition does not guarantee a Chinese translation. |
@@ -214,7 +214,7 @@ Reproducible OCR edge cases, authorized MDX compatibility fixtures, safer Notes 
 
 ## Development
 
-Product versions use `YY.feature.fix`; the first candidate remains **26.1.0 (build 1)**. See the [release policy](docs/RELEASING.md#version-policy).
+Product versions use `YY.feature.fix`; the first public test release is **26.1.0 (build 1)**. See the [release policy](docs/RELEASING.md#version-policy).
 
 Swift and AppKit, with ScreenCaptureKit, Vision, Dictionary Services, AVFoundation, Natural Language, Apple Events, and system zlib. A small dictionary-provider interface isolates system lookup from local MDX storage and decoding. Application, test, script and configuration source uses English. Interface strings use English keys with bundled English/Chinese catalogs; multilingual examples and stable legacy Notes identifiers live in separate data resources.
 

@@ -2,7 +2,7 @@
 
 [English](INSTALL.md) · 简体中文
 
-WordNest 免费开源。首个发行版本使用 **ad-hoc 临时签名，未经 Apple Developer ID 签名或公证**；自行编译不需要付费的 Apple 开发者会员。临时签名用于本地代码完整性校验，不代表 Apple 已确认开发者身份或检查应用安全性。请仅从[官方仓库的 Releases](https://github.com/Albort12138/WordNest/releases) 下载。候选版本号不代表安装包已经公开发布。
+WordNest 免费开源。首个发行版本使用 **ad-hoc 临时签名，未经 Apple Developer ID 签名或公证**；自行编译不需要付费的 Apple 开发者会员。临时签名用于本地代码完整性校验，不代表 Apple 已确认开发者身份或检查应用安全性。请仅从[官方仓库的 Releases](https://github.com/Albort12138/WordNest/releases) 下载。[26.1.0（build 1）](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0) 是首个公开试用版，全新环境安装及其他 Mac 配置仍待验证。
 
 ## 系统要求与校验
 
@@ -20,7 +20,7 @@ shasum -a 256 WordNest-26.1.0-build1-macos-arm64-unnotarized.dmg
 
 1. 更新前先退出正在运行的 WordNest。打开 DMG，将 **WordNest.app** 拖入 **应用程序**；确认更新时替换旧版，然后推出 DMG。
 2. 从 **应用程序 → WordNest** 启动。请为安装后的这一份应用授权。
-3. macOS 可能提示无法检查应用或无法验证开发者。如果你信任这次下载，请按 [Apple 针对单个应用的官方流程](https://support.apple.com/zh-cn/102445)操作：先尝试启动，再打开 **系统设置 → 隐私与安全性**，找到 WordNest 的拦截提示，若提供 **仍要打开**，点击并在后续提示中确认打开。系统可能要求管理员验证；不同系统版本和受管理的 Mac 表现可能不同，不保证总能提供此入口。
+3. macOS 可能提示无法检查应用或无法验证开发者。如果你信任这次下载，请按 [Apple 针对单个应用的官方流程](https://support.apple.com/zh-cn/102445)操作：先尝试启动，再打开 **系统设置 → 隐私与安全性**，在右侧向下滚过权限列表，到 **安全性** 区域找到 WordNest 的拦截提示，若提供 **仍要打开**，点击并在后续提示中确认打开。系统可能要求管理员验证；不同系统版本和受管理的 Mac 表现可能不同，不保证总能提供此入口。
 4. 如果提示含有恶意软件、授权被撤销或应用已损坏，请停止操作，核对下载并反馈完整提示，不要将所有警告都当作“未知开发者”。
 5. WordNest 的首个页面会让你选择语言，默认 **跟随系统**。之后按所需功能完成权限引导。
 

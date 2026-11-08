@@ -1,10 +1,18 @@
 # Development status
 
-Updated: 2026-11-08. Current source version: **26.1.0 release candidate, build 1**. This document describes implementation and release readiness; it is not a release announcement.
+Updated: 2026-11-08. Current product version: **26.1.0 public test release, build 1**. This document describes implementation and release readiness; it is not a release announcement.
+
+## First public test release — 2026-11-08
+
+[WordNest 26.1.0 build 1](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0) is publicly available as a GitHub Pre-release. Tag `v26.1.0` points to `0be5b7cb31a31013ff31a5c32535b89d3143c2cd`; the published ad-hoc-signed, unnotarized DMG/ZIP have not been replaced by later documentation changes.
+
+The release commit's [macOS 15 arm64 CI](https://github.com/Albort12138/WordNest/actions/runs/42431734176) passed 7 distribution-policy tests, 463 logic/fixture checks, compilation and 110 fixed-data UI checks. Real arm64 binary/signature integrity, DMG verification, matching DMG/ZIP contents, license/install payloads and final checksums passed locally. All four public assets were also downloaded without authentication and compared byte for byte with the verified local candidate.
+
+On the existing M3 development Mac running macOS 26.6.2, an actual browser download retained quarantine, the installed app matched the candidate, and the user approved the app-specific Open Anyway prompt. Launch from Applications was observed. The user confirmed real shortcut lookup and dictionary output, then isolated Notes save/read-back with one row and deliberate collection count 1 → 2. These interactive outcomes are user-reported; the final lookup card and Notes table were not independently inspected by automation. Fresh-machine setup, other Macs and broader permission/restart/fullscreen configurations remain untested; this is a limited public test release.
 
 ## Unnotarized distribution policy
 
-The maintainer selected free, explicitly unnotarized public distribution without paid Apple developer membership. Public package mode `--unsigned` forces ad-hoc signing, requires a clean committed source tree and includes bilingual installation guides, a warning file and `-unnotarized` artifact names. The manual GitHub draft workflow defaults to this mode without Apple secrets. Optional Developer ID signing/notarization still fails closed if explicitly selected without credentials. Actual public download, clean-machine Gatekeeper approval and permission/upgrade acceptance remain pending; policy and packaging support do not establish those results.
+The maintainer selected free, explicitly unnotarized public distribution without paid Apple developer membership. Public package mode `--unsigned` forces ad-hoc signing, requires a clean committed source tree and includes bilingual installation guides, a warning file and `-unnotarized` artifact names. The manual GitHub draft workflow defaults to this mode without Apple secrets. Optional Developer ID signing/notarization still fails closed if explicitly selected without credentials. Public download and existing-Mac installation/core-workflow results are recorded above. Clean-machine Gatekeeper approval and broader permission/upgrade acceptance remain pending; packaging support does not establish those results.
 
 ## GitHub CI and local demonstration follow-up
 
@@ -42,7 +50,7 @@ The provider seam uses pure Swift plus macOS zlib, without Python/Node or a host
 
 Earlier candidate evidence follows for provenance:
 
-The first public release remains an unreleased `26.1.0` candidate with build `1`. The language-selection refinement is included in this initial candidate; it does not create a separate release. Before local MDX support, the regression suite passed **387 checks**, including three expanded language choices, a visible resolved system language, immediate bilingual switching, saved selection before simulated consent, five-step layout in both appearances and interrupted-setup restoration. These are generated-data and injected-permission checks, not a new real macOS consent run. A separate fixed-data AppKit run passed **87 checks** without a Notes connection. Interactive checks in an isolated setup preview confirmed a Chinese system default, immediate switching to English and back, and preserving the selection when navigating to the screen-permission page and returning. No real permissions were requested. The English-source and bilingual-resource policy passed. Single-table native Notes evidence below remains earlier validation; personal notebooks were not accessed for this UI change.
+During the earlier candidate stage, the product remained unreleased at `26.1.0` build `1`. The language-selection refinement is included in this initial candidate; it does not create a separate release. Before local MDX support, the regression suite passed **387 checks**, including three expanded language choices, a visible resolved system language, immediate bilingual switching, saved selection before simulated consent, five-step layout in both appearances and interrupted-setup restoration. These are generated-data and injected-permission checks, not a new real macOS consent run. A separate fixed-data AppKit run passed **87 checks** without a Notes connection. Interactive checks in an isolated setup preview confirmed a Chinese system default, immediate switching to English and back, and preserving the selection when navigating to the screen-permission page and returning. No real permissions were requested. The English-source and bilingual-resource policy passed. Single-table native Notes evidence below remains earlier validation; personal notebooks were not accessed for this UI change.
 
 The 2026-11-07 licensing update adopts MIT for the unreleased candidate and removes separate paid authorization and contributor-agreement requirements. At that stage, application/test sources were unchanged from the language-first implementation except for the About credit text. The earlier regression and AppKit counts above are retained evidence, not rerun claims for this notice-only change. Build, license-payload and archive checks are recorded separately against the refreshed local candidate.
 
@@ -87,7 +95,7 @@ These are local candidate checks, not a notarized release, a completed GitHub Ac
 | Notion integration | Not implemented |
 | Automatic application updates | Not implemented |
 
-## Before publication
+## Before subsequent distribution
 
 Complete the five-step manual gate in [validation-plan.md](validation-plan.md), run the current build/test workflow, and record results against the exact artifact. Publish only the declared distribution mode after installation checks. The chosen public route must be explicitly labeled unnotarized; local dirty previews remain distinct from public packages. Signed mode additionally requires Developer ID and Apple notarization.
 

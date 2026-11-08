@@ -30,7 +30,7 @@ Screen OCR, local dictionary and speech services, original-line retention, nativ
 
 English is the default README with an equivalent Chinese version. Neither includes personal paths or private collection examples. PRIVACY.md explains capture scope, source metadata, Notes account sync, local transaction metadata, exports, permissions, and removal.
 
-The DMG workflow defaults to an explicitly unnotarized draft; the first public download is pending. Source builds are explicitly ad-hoc signed. No price, support SLA, compatibility certification, or publication result is invented.
+The DMG workflow defaults to an explicitly unnotarized draft; the [first public test release](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0) was published on 2026-11-08 after user-assisted installation and core-workflow checks on the existing M3 Mac. Source builds are explicitly ad-hoc signed. No price, support SLA, compatibility certification, or publication result is invented.
 
 ### Evidence and sources
 

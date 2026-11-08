@@ -43,7 +43,7 @@ Setup explains and requests screen capture, plus optional source-link and Notes 
 
 ## Distribution and licensing
 
-The intended download channel is [GitHub Releases](https://github.com/Albort12138/wordnest/releases), with clearly labeled, ad-hoc-signed unnotarized packages requiring no paid developer membership. Signed/notarized distribution remains optional. A first official release remains pending. Source builds are available for development and may need separate system authorization.
+The intended download channel is [GitHub Releases](https://github.com/Albort12138/wordnest/releases), with clearly labeled, ad-hoc-signed unnotarized packages requiring no paid developer membership. Signed/notarized distribution remains optional. The first [public test release, 26.1.0 build 1](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0), is available; clean-machine and other-Mac acceptance remain open. Source builds are available for development and may need separate system authorization.
 
 WordNest is free and open-source software under the [MIT License](../LICENSE). Use, modification and redistribution, including commercial use, require no separate authorization or fee; preserve the copyright and license notices. Code and documentation contributions use the same license without a separate contributor agreement. The owl artwork is excluded from MIT; see the [separate artwork license](../Assets/Branding/LICENSE). Modified distributions must replace the artwork or obtain written permission.
 

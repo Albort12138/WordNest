@@ -1,6 +1,6 @@
 # Releasing WordNest
 
-WordNest is free and open source. The selected first-release route is **explicitly unnotarized distribution**, requiring no paid Apple developer membership or Apple signing secrets. Developer ID signing and notarization remain optional. A packaging script, candidate version or draft is not a published download.
+WordNest is free and open source. The selected first-release route is **explicitly unnotarized distribution**, requiring no paid Apple developer membership or Apple signing secrets. Developer ID signing and notarization remain optional. The first public test release is [26.1.0 build 1](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0), published on 2026-11-08. Its binaries correspond to tag `v26.1.0`, commit `0be5b7cb31a31013ff31a5c32535b89d3143c2cd`. Later documentation commits do not change those artifacts. A packaging script or draft alone does not establish publication.
 
 ## Product identity and build modes
 
@@ -22,7 +22,7 @@ The builder writes `work/build/WordNest.app` by default and refuses to replace u
 
 Product versions use `YY.feature.fix`, with `26.1.0` as the first public baseline. The year is the actual release year. Increase the feature number for new capabilities or substantial interaction changes and reset the fix number to zero; increase the fix number for corrections and small refinements. For a mixed release, use the feature increment. The first release in a new year starts at `YY.1.0`; a calendar change alone does not require a release. Numbers are not zero-padded.
 
-`WORDNEST_VERSION` becomes `CFBundleShortVersionString`. `WORDNEST_BUILD_NUMBER` becomes `CFBundleVersion`. Public build numbering starts at `1` for `26.1.0`; this is a one-time transition from private `0.x` previews, not an annual reset. The initial unpublished candidate remains `26.1.0` build `1` while its first-release scope is being finalized. After the first public release, every later distributed build increments that number, including rebuilds of the same product version. Do not reset it when the feature, fix or year changes. This is a calendar-based product policy, not a semantic-versioning API compatibility contract.
+`WORDNEST_VERSION` becomes `CFBundleShortVersionString`. `WORDNEST_BUILD_NUMBER` becomes `CFBundleVersion`. Public build numbering starts at `1` for `26.1.0`; this is a one-time transition from private `0.x` previews, not an annual reset. The initial public test release is `26.1.0` build `1`. Documentation-only changes do not require a new app build or moving the release tag. After the first public release, every later distributed build increments that number, including rebuilds of the same product version. Do not reset it when the feature, fix or year changes. This is a calendar-based product policy, not a semantic-versioning API compatibility contract.
 
 Use `v26.1.0` for the first public Git tag and `WordNest-26.1.0-build1-macos-arm64` as the package basename. Installers, ZIP archives, source snapshots, checksums and release descriptions must identify the same product version and build. A candidate label or assigned version never means the release has already been published.
 

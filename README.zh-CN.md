@@ -12,13 +12,13 @@
 
 **Swift + AppKit 原生应用 · Apple Silicon · macOS 14+ · 代码 MIT / 形象独立许可**
 
-[从源码体验](#从源代码构建) · [工作原理](#工作原理) · [阅读代码](#仓库地图) · [参与贡献](CONTRIBUTING.md)
+[下载 Apple Silicon 版](https://github.com/Albort12138/WordNest/releases/download/v26.1.0/WordNest-26.1.0-build1-macos-arm64-unnotarized.dmg) · [从源码体验](#从源代码构建) · [工作原理](#工作原理) · [阅读代码](#仓库地图) · [参与贡献](CONTRIBUTING.md)
 
 WordNest 是一款免费、开源的轻量 macOS 菜单栏取词工具。看带字幕的视频，或阅读无法直接选中的文字时，将鼠标指向单词，按 **Control + Option + D**，即可查看释义、点击发音，并把单词、原句及能够取得的来源链接收藏到 Apple 备忘录。
 
 OCR、词典查询和发音在 Mac 本机完成。WordNest 不提供账号、服务器、云端翻译或分析上报，生词保存在你自己的 Apple 备忘录中。
 
-> **发布状态：** 当前发布候选版为 **26.1.0（build 1）**。首个公开安装包按 **未经 Apple 公证、使用 ad-hoc 临时签名** 的方式准备；自行编译无需付费开发者会员。目前尚未发布可下载的发行包。
+> **公开试用版：** [**26.1.0（build 1）**](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0) 已发布，欢迎小范围试用与反馈。安装包 **未经 Apple 公证，使用 ad-hoc 临时签名**，首次启动可能被 macOS 拦截，请先阅读[安装说明](docs/INSTALL.zh-CN.md)。自行编译无需付费开发者会员。
 
 ## 看看真实使用过程
 
@@ -53,7 +53,7 @@ WordNest 不自动暂停视频。字幕切换、文字不清晰、鼠标未命�
 
 ### 下载安装包
 
-公开安装包将发布在 [GitHub Releases](https://github.com/Albort12138/wordnest/releases)，首个下载包尚待发布。文件名含 `-unnotarized` 的版本使用临时签名，**未经 Apple Developer ID 签名或公证**，macOS 可能拦截首次启动。
+从 GitHub Releases 下载 [WordNest 26.1.0 公开试用版](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0)，也可直接下载 [Apple Silicon DMG](https://github.com/Albort12138/WordNest/releases/download/v26.1.0/WordNest-26.1.0-build1-macos-arm64-unnotarized.dmg)。文件名含 `-unnotarized` 的版本使用临时签名，**未经 Apple Developer ID 签名或公证**，macOS 可能拦截首次启动。
 
 1. 在正式发布的版本附件中下载 Apple Silicon `-unnotarized.dmg` 和对应的 SHA-256 校验文件，核对同名文件的校验和。
 2. 打开磁盘映像，将 **WordNest.app** 拖到 **应用程序**。
@@ -136,7 +136,7 @@ WordNest 自身不发起网络请求。捕获、OCR、词典查询、发音和�
 
 | 能力 | 当前范围 |
 | --- | --- |
-| 硬件与系统 | 构建目标为 Apple Silicon、macOS 14+。开发期间已在 M3、macOS 26 上测试；其他配置仍需验证。 |
+| 硬件与系统 | 构建目标为 Apple Silicon、macOS 14+。下载后的安装包与核心流程已在现有 M3、macOS 26.6.2 环境验证；全新环境安装及其他配置仍需测试。 |
 | 应用界面 | 跟随系统、简体中文或英文。菜单、查词卡片、设置与生词浏览随选择切换；未知的系统诊断信息可能使用系统语言。 |
 | OCR | 自动或明确选择原文语言，使用当前 macOS Vision 实际提供的语言模型。 |
 | 释义 | 使用本机已启用的系统词典，或所选的本地 MDX 2.x 词典。可能返回原文解释、缺词或未命中语境的义项；能识别不等于一定能翻译成中文。 |
@@ -214,7 +214,7 @@ flowchart TD
 
 ## 开发
 
-版本采用 `年份.功能.修复`，当前候选版保持 **26.1.0（build 1）**，详见[版本规则](docs/RELEASING.md#version-policy)。
+版本采用 `年份.功能.修复`，首个公开试用版为 **26.1.0（build 1）**，详见[版本规则](docs/RELEASING.md#version-policy)。
 
 使用 Swift 和 AppKit，结合 ScreenCaptureKit、Vision、Dictionary Services、AVFoundation、Natural Language 与 Apple Events。界面使用英文键与独立的中英文翻译表，多语言样例和旧版备忘录标识分别保存在数据资源中。
 

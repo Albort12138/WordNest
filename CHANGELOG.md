@@ -2,7 +2,9 @@
 
 This log describes source changes, not a guarantee that a signed binary has been published. See [GitHub Releases](https://github.com/Albort12138/wordnest/releases) for actual downloadable artifacts and their release notes.
 
-## 26.1.0 (1) — First public release candidate
+## 26.1.0 (1) — First public test release, 2026-11-08
+
+[Download the Pre-release](https://github.com/Albort12138/WordNest/releases/tag/v26.1.0). Apple Silicon, macOS 14+; ad-hoc signed and not Apple-notarized. Tested download, installation and core use are limited to the existing M3 development Mac; other environments remain unverified.
 
 - Support explicitly unnotarized public DMG/ZIP packages without paid Apple developer membership or Apple signing secrets; include English/Chinese installation guides, warning labels, checksums and distribution metadata. Keep signed/notarized packaging as an explicit optional route. Updates using ad-hoc signatures may require renewed privacy grants.
 
@@ -18,7 +20,7 @@ This log describes source changes, not a guarantee that a signed binary has been
 - Include the product version and build in installer and source archive filenames.
 - Carry forward the local lookup, speech, single-row Notes vocabulary and source-history features validated in the private previews below.
 
-This number identifies the first public release candidate. Unnotarized installation acceptance and GitHub publication remain separate release steps. Developer ID signing and notarization are optional future distribution steps.
+The public tag `v26.1.0` identifies the exact source of the published build. The maintainer confirmed successful downloaded installation, shortcut lookup and isolated Notes save/read-back with one row and collection count 1 → 2. Clean-machine and broader configuration acceptance remain open. Developer ID signing and notarization are optional future distribution steps.
 
 ## 0.8.0 — Private preview
 
