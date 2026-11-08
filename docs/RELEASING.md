@@ -1,28 +1,22 @@
 # Releasing WordNest
 
-This document describes the maintainers' distribution process. A build script or workflow being present does not mean a signed release has already been produced or published. Publishing a release is a separate maintainer action.
+WordNest is free and open source. The selected first-release route is **explicitly unnotarized distribution**, requiring no paid Apple developer membership or Apple signing secrets. Developer ID signing and notarization remain optional. A packaging script, candidate version or draft is not a published download.
 
-## Product metadata and build modes
+## Product identity and build modes
 
-`config/product.env` is the shared source for the product version, build number, public bundle identifier, minimum macOS version and architecture. The current candidate is v26.1.0 build 1. Preview and release builds use `io.github.albort12138.wordnest`; default development builds use `io.github.albort12138.wordnest.development` to keep Launch Services and TCC identities separate. The executable remains `SubtitleLookup`. Current packages target Apple Silicon (`arm64`), not Intel. The first signed public release is still pending; these instructions do not establish a published download.
+`config/product.env` defines version **26.1.0**, build **1**, Apple Silicon (`arm64`), minimum macOS **14.0** and bundle identifier `io.github.albort12138.wordnest`. Default development builds append `.development` to isolate fixture launches from the installed app. The executable remains `SubtitleLookup`.
 
 ```sh
-# Local development, including explicitly gated test/preview commands.
+# Local development: separate identity and gated fixture entry points.
 bash scripts/build.sh --development
 
-# Production code paths, but ad-hoc signed and not notarized.
+# Production app code paths, ad-hoc signed, without development entry points.
 bash scripts/build.sh --preview
-
-# Signed production code paths; certificate must already be installed.
-SUBTITLE_LOOKUP_SIGNING_IDENTITY='Developer ID Application: Your Name (TEAMID)' \
-  bash scripts/build.sh --release
 ```
 
-Default app output is `work/build/WordNest.app`. `SUBTITLE_LOOKUP_APP_DIR` and `SUBTITLE_LOOKUP_BUILD_DIR` remain supported; app output must be named `WordNest.app` inside this checkout's `work/` directory. The builder refuses to overwrite existing apps that lack its managed-build marker and the identity expected for the selected mode. Use separate app output paths when changing between development and preview/release identities. Existing authorized prototype packages are preserved. To retain a new build, choose another output path before the next build.
+The public unnotarized package uses preview build mode internally: this selects production app code paths, not development-only commands. Its package metadata independently records `package_mode=unsigned`, `signing=ad-hoc`, and `notarized=no`. An ad-hoc signature checks local code integrity; it does not verify publisher identity or provide Apple malware review.
 
-Development builds define `WORDNEST_DEVELOPMENT`. Preview and release builds do not include development-only entry points. Only release mode requires Developer ID, enables hardened runtime, adds a secure timestamp and applies `config/WordNest.entitlements` for Apple Events. User permissions are still required; entitlements do not grant TCC access.
-
-Do not loosen signature requirements, disable Gatekeeper, rewrite TCC databases or create permissive code requirements to avoid setup. Development signatures can change after each build; use the setup flow to review the current installed build's permissions.
+The builder writes `work/build/WordNest.app` by default and refuses to replace unmanaged apps. Build and app paths can be changed with `SUBTITLE_LOOKUP_BUILD_DIR` and `SUBTITLE_LOOKUP_APP_DIR`; app output must be named `WordNest.app` under this checkout's `work/`. Preserve existing authorized installations. User consent is always required for TCC permissions, regardless of packaging mode. Ad-hoc updates may require renewed grants.
 
 ## Version policy
 
@@ -37,14 +31,33 @@ Use `v26.1.0` for the first public Git tag and `WordNest-26.1.0-build1-macos-arm
 ```sh
 for script in scripts/*.sh; do bash -n "$script"; done
 bash scripts/check-source-policy.sh
+bash scripts/export-source.sh --check-only
+python3 Tests/ReleasePackagingTests.py
 bash scripts/test.sh
 bash scripts/build.sh --development
 work/build/WordNest.app/Contents/MacOS/SubtitleLookup --ui-self-test
 ```
 
-These checks do not establish real fullscreen compatibility, correct source capture in every app, or successful Notes writes. Dictionary and speech system checks are optional local checks using the documented test flags. Notes integration tests require an explicitly selected isolated test destination, not a personal vocabulary notebook. Never grant unattended CI access to personal Notes or captured screens.
+Core/UI fixtures do not establish real fullscreen behavior, permission approval, Notes writes or downloaded installation. Packaging tests use isolated fixture tools, never personal certificates or Notes. The actual packaging pass separately builds a real arm64 binary and verifies its signature, DMG and checksums. CI uses GitHub's `macos-15` arm64 runner and verifies `uname -m`.
 
-The CI workflow uses the standard `macos-15` GitHub-hosted arm64 runner label and verifies `uname -m`. GitHub currently lists `macos-15` and `macos-26` as arm64; `macos-15-arm64` is not the standard workflow label. See [GitHub's runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners) and [official runner images](https://github.com/actions/runner-images).
+## Public unnotarized packaging
+
+Commit the reviewed source first; public packages require a clean committed checkout. Then run:
+
+```sh
+bash scripts/release.sh --unsigned
+```
+
+No Apple account, signing certificate, notarization profile or paid membership is used. This mode forces an ad-hoc signature even if signing variables are set. Outputs under `work/releases/` are:
+
+- `WordNest-26.1.0-build1-macos-arm64-unnotarized.dmg`
+- The matching `.zip`, `-SHA256SUMS.txt`, and `-build-info.txt`
+
+Both archives contain the same app, Applications shortcut, `UNNOTARIZED.txt`, English and Chinese installation guides, `LICENSE`, `NOTICE`, `PRIVACY.md`, `THIRD-PARTY-NOTICES.md` and `WordNest-artwork-LICENSE.txt`. The app itself retains code, artwork and privacy notices in Resources after it is dragged out of the DMG. Code is MIT; owl artwork has separately reserved rights under `Assets/Branding/LICENSE`.
+
+The app may be blocked by Gatekeeper on first launch. Link [INSTALL.md](INSTALL.md) and [INSTALL.zh-CN.md](INSTALL.zh-CN.md) prominently. Explain Apple's app-specific Open Anyway option only for a trusted download when offered. Never disable Gatekeeper/SIP, remove quarantine attributes or treat malware/damage warnings as ordinary unidentified-developer prompts. Clean-machine acceptance remains required and may reveal unsupported environments. A checksum does not authenticate the publisher or replace Apple review.
+
+Existing output files are never overwritten. Use a new `WORDNEST_RELEASE_DIR` under `work/` for another candidate. Metadata records the exact public-source digest, commit and state; changes during packaging prevent final output.
 
 ## Local packaging preview
 
@@ -52,64 +65,51 @@ The CI workflow uses the standard `macos-15` GitHub-hosted arm64 runner label an
 bash scripts/release.sh --unsigned-preview
 ```
 
-This builds production code paths using an ad-hoc signature and creates a DMG, ZIP, SHA-256 checksums and build metadata in `work/releases/`. Filenames include `unsigned-preview`, and the payload contains an explicit warning. It is a local packaging check, not an official signed distribution. It may be rejected by normal Gatekeeper policy. Do not disable system protections to make the preview installable.
+This allows uncommitted source for local packaging checks. Filenames contain `-unsigned-preview`, metadata reports the source state honestly, and `UNSIGNED-PREVIEW.txt` marks it as a local test. Do not upload a dirty preview as the public candidate. No package command uploads to GitHub.
 
-The DMG contains `WordNest.app`, an Applications shortcut, `LICENSE`, `NOTICE`, `PRIVACY.md`, `THIRD-PARTY-NOTICES.md` and `WordNest-artwork-LICENSE.txt`. The code is MIT-licensed; the bundled owl artwork has separately reserved rights. The MIT license, artwork license, third-party attributions, copyright notice and privacy document also remain inside the app's Resources folder after installation. Modified distributors must replace the artwork with authorized assets or obtain written permission under `Assets/Branding/LICENSE`. The ZIP contains the same app and documentation. Existing output filenames are never overwritten. To rerun packaging, select a new `WORDNEST_RELEASE_DIR` inside `work/`, or deliberately archive/remove only the previous generated outputs.
-
-## Reviewable source export
+## Source export
 
 ```sh
 bash scripts/export-source.sh --check-only
 bash scripts/export-source.sh
 ```
 
-The explicit `config/source-files.txt` manifest lists reviewed public inputs. Update it deliberately when adding public files. The exporter rejects unexpected files under public source directories, missing inputs, symlinks and existing outputs. It creates a source archive, a per-file SHA-256 manifest and archive checksums in `work/source-distribution/`. It excludes the Git index/history, compiled apps and private development history; exporting does not commit, push or publish anything. Review that snapshot before the first public repository import.
+The explicit `config/source-files.txt` manifest lists reviewed inputs. The exporter rejects missing/unreviewed files, symlinks and existing outputs. Source archives and checksums go to `work/source-distribution/`; Git history, local builds, personal captures and the private code guide are excluded. An export does not publish anything.
 
-Preview build metadata records `source_state` (clean, dirty, or exported), `source_revision`, and a SHA-256 digest of the exact public-source manifest contents. The script rejects source changes during packaging. Official release packaging additionally requires a clean committed checkout, so an old Git revision cannot be presented as the source of uncommitted changes. The GitHub workflows pin checkout to a reviewed commit; update the pin deliberately when upgrading it.
+## Optional signed and notarized packaging
 
-## Signed and notarized packaging
-
-Before running production packaging, the maintainer needs an Apple Developer Program account, a valid **Developer ID Application** certificate and its private key, and Apple notarization credentials. The build refuses to fall back to ad-hoc signing if these are missing. Apple describes the requirements in [Notarizing macOS software before distribution](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
-
-Store notarization credentials in Keychain using `xcrun notarytool store-credentials`; follow its interactive prompts rather than writing passwords into a repository or shell history. Then run:
+This route requires paid Apple Developer Program membership, a Developer ID Application identity with its local private key, and notarization credentials. These are not requirements of the chosen unnotarized route. Store credentials interactively with `xcrun notarytool store-credentials`, not in source or shell history.
 
 ```sh
 SUBTITLE_LOOKUP_SIGNING_IDENTITY='Developer ID Application: Your Name (TEAMID)' \
 WORDNEST_NOTARY_PROFILE='YourNotaryProfile' \
-  bash scripts/release.sh
+  bash scripts/release.sh --signed
 ```
 
-The script:
+For compatibility, invoking `release.sh` without a mode still selects the signed route and fails if credentials are absent. It never silently downgrades to unsigned. Only explicit `--unsigned` or `--unsigned-preview` selects ad-hoc packaging.
 
-1. Builds a Developer ID-signed app with hardened runtime and a timestamp.
-2. Submits an app ZIP to Apple; requires an `Accepted` result.
-3. Staples and validates the app ticket, verifies code integrity and runs Gatekeeper assessment.
-4. Creates the final ZIP and DMG from that app, with the license and privacy notice.
-5. Signs, notarizes and staples the DMG; requires Gatekeeper acceptance.
-6. Writes final SHA-256 checksums after stapling and records version, build, architecture, mode and source revision.
-
-The release script never uploads to GitHub. If any stage fails, it stops without moving final artifacts to the release directory. Apple notarization itself is a network operation performed by the maintainer; it is not part of WordNest's runtime vocabulary workflow. Signing/notarization and packaging are a repeatable process, not a claim of bit-for-bit reproducible signed binaries.
+Signed mode enables hardened runtime, secure timestamps and `config/WordNest.entitlements`; it requires Apple Accepted results for app and DMG, staples and validates tickets, verifies code integrity, and runs Gatekeeper assessments. Checksums are written after stapling. Signing/notarization is a maintainer network operation, not part of WordNest's local runtime workflow. See [Apple's notarization documentation](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
 
 ## Manual GitHub draft workflow
 
-`.github/workflows/release.yml` runs only through `workflow_dispatch` on this repository's `main` branch. It requires an existing `vYY.FEATURE.FIX` tag whose version matches `config/product.env`; it creates a **draft**, never an automatically published release. There is no unsigned public fallback. A maintainer must separately authorize repository publication, tagging and workflow execution.
+`.github/workflows/release.yml` runs only through `workflow_dispatch` on this repository's `main` branch. It needs an existing `vYY.FEATURE.FIX` tag matching product metadata and reviewed main history. The `distribution` input defaults to **unsigned**. Configure a `release` GitHub environment with appropriate maintainer access; unsigned mode needs **no secrets** and skips certificate import, notarization and signing-keychain cleanup. It creates a **draft** with explicit bilingual unnotarized warnings and clearly named assets, never an automatically published release.
 
-Configure the `release` GitHub environment, restrict it to trusted maintainers, and add these secrets:
+The optional **signed** input uses these secrets only in the relevant steps:
 
 | Secret | Purpose |
 | --- | --- |
-| `DEVELOPER_ID_P12_BASE64` | Base64-encoded certificate and private-key export |
+| `DEVELOPER_ID_P12_BASE64` | Encoded certificate and private-key export |
 | `DEVELOPER_ID_P12_PASSWORD` | Password protecting that export |
-| `DEVELOPER_ID_APPLICATION` | Exact `Developer ID Application: ...` signing identity |
-| `APPLE_ID` | Apple account used for notarization |
+| `DEVELOPER_ID_APPLICATION` | Exact Developer ID Application identity |
+| `APPLE_ID` | Notarization account |
 | `APPLE_TEAM_ID` | Developer team identifier |
-| `APPLE_APP_PASSWORD` | App-specific password for notarization |
+| `APPLE_APP_PASSWORD` | App-specific notarization password |
 
-All must be configured. Before executing repository scripts, the workflow verifies that the tagged commit belongs to both `origin/main` and the trusted main revision that dispatched it. Signing secrets are scoped to the steps that need them. The workflow imports signing material into an ephemeral runner keychain, stores a temporary notarization profile, builds/verifies packages, attaches them to a draft release, and deletes the temporary signing files and keychain. It does not run on pull requests and does not execute a contributor's branch with release secrets. Review the tagged code before dispatching; release credentials must never be placed in source files or logs.
+Signed mode requires every secret, imports into an ephemeral runner keychain and removes signing material afterward. Neither mode runs on pull requests or arbitrary contributor branches. Publication, tagging and workflow execution remain separate maintainer actions.
 
 ## Before publishing the draft
 
-Download the DMG through a browser on a clean test Mac, so the actual quarantine/Gatekeeper path is tested. Verify checksums, open the image, drag to Applications, launch the app, and complete first-run setup. Test denied and granted permissions, relaunch, normal/video fullscreen lookup, source/title capture, dictionary/voice availability, and Notes collection/readback/count preservation in a dedicated test notebook.
+Download the DMG through a browser on a clean test Mac, so the actual quarantine/Gatekeeper path is tested. For unnotarized builds, record the initial block and any app-specific Open Anyway flow; record malware/damage warnings or unavailable exceptions as failures instead of bypassing them. For signed builds, additionally verify notarization and normal Gatekeeper acceptance. Verify checksums, open the image, drag to Applications, launch the app, and complete first-run setup. Test denied and granted permissions, relaunch, normal/video fullscreen lookup, source/title capture, dictionary/voice availability, and Notes collection/readback/count preservation in a dedicated test notebook.
 
 Validate first-launch language selection before requesting any permission: System default, 简体中文, and English must be expanded on the first page, with System default selected and its resolved language shown. Switching must update the whole page before continuing to permission setup. Check the explicit choice survives permission-related termination and reopening. If macOS Quit & Reopen only closes the app, manually reopening the same copy must resume the saved setup step, including when an earlier introduction had already been marked complete. Do not advertise guaranteed automatic relaunch. Exercise menus, cards, notebook settings, browsing, and recovery messages in both interface languages. Check that changing interface language leaves dictionary/user data and persisted Notes schemas unchanged; unknown system diagnostics may retain OS language. Keep bilingual UI checks and real permission/restart acceptance evidence distinct; neither is implied by a passing core suite.
 

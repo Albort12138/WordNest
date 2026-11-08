@@ -4,6 +4,8 @@ This log describes source changes, not a guarantee that a signed binary has been
 
 ## 26.1.0 (1) — First public release candidate
 
+- Support explicitly unnotarized public DMG/ZIP packages without paid Apple developer membership or Apple signing secrets; include English/Chinese installation guides, warning labels, checksums and distribution metadata. Keep signed/notarized packaging as an explicit optional route. Updates using ad-hoc signatures may require renewed privacy grants.
+
 - Add selectable local dictionary providers and managed MDX 2.x import, with definitions inside the lookup card, persistent selection, explicit failures and no network service. Keep imported definitions intact when collecting into the existing Notes table.
 
 - Release the initial candidate under the MIT License, with free use, modification and redistribution, including commercial use; remove separate paid authorization and contributor-agreement requirements.
@@ -16,7 +18,7 @@ This log describes source changes, not a guarantee that a signed binary has been
 - Include the product version and build in installer and source archive filenames.
 - Carry forward the local lookup, speech, single-row Notes vocabulary and source-history features validated in the private previews below.
 
-This number identifies the first public release candidate. Developer ID signing, notarization, installation acceptance and GitHub publication remain separate release steps.
+This number identifies the first public release candidate. Unnotarized installation acceptance and GitHub publication remain separate release steps. Developer ID signing and notarization are optional future distribution steps.
 
 ## 0.8.0 — Private preview
 

@@ -18,7 +18,7 @@ WordNest is a free, open-source macOS menu bar app for learning from subtitled v
 
 OCR, dictionary lookup, and speech synthesis run on your Mac. WordNest has no account, backend, cloud translation, or analytics. Your vocabulary lives in Apple Notes.
 
-> **Release status:** The current release candidate is **26.1.0 (build 1)**. The first signed and notarized public release is pending signing credentials; a ready-to-install public download is not available yet.
+> **Release status:** The current release candidate is **26.1.0 (build 1)**. The first public installer is being prepared as an **unnotarized, ad-hoc-signed** download. No Apple developer membership is required to build from source. A downloadable release is not published yet.
 
 ## See it in the real app
 
@@ -53,13 +53,13 @@ WordNest does not automatically pause videos. Changing subtitles, unclear text, 
 
 ### Download an app
 
-Public installers will be published on [GitHub Releases](https://github.com/Albort12138/wordnest/releases). The first signed release is pending; the following describes the intended distribution flow, not an already published installer.
+Public installers will be published on [GitHub Releases](https://github.com/Albort12138/wordnest/releases). The first download is pending. Packages ending in `-unnotarized` are ad-hoc signed, **not Developer ID-signed or notarized by Apple**; macOS may block first launch.
 
-1. Download the Apple Silicon `.dmg` attached to a published release.
+1. Download the Apple Silicon `-unnotarized.dmg` and its SHA-256 checksums attached to a published release. Verify the matching checksum.
 2. Open the disk image and drag **WordNest.app** into **Applications**.
 3. Open WordNest from Applications and complete first-launch setup.
 
-Use artifacts from the official repository. Source builds have a different signing identity from official releases and may need their own macOS permission grants.
+If macOS cannot verify the developer, review the [English installation guide](docs/INSTALL.md) or [中文安装说明](docs/INSTALL.zh-CN.md). It explains Apple's app-specific **Privacy & Security → Open Anyway** option when available. Do not disable Gatekeeper or remove quarantine attributes; malware/damage alerts require investigation. Checksum verification is not Apple review or verified developer identity.
 
 ### Build from source
 
@@ -72,7 +72,7 @@ bash scripts/build.sh
 open work/build/WordNest.app
 ```
 
-The default build is ad-hoc signed for local development, using a separate development bundle identity. Rebuilding can invalidate previous macOS permissions. Preserve a working authorized build while testing a replacement. Official distribution requires stable signing and notarization; a successful local build does not provide those credentials.
+The default build is ad-hoc signed for local development, using a separate development bundle identity. Rebuilding can invalidate previous macOS permissions. Preserve a working authorized build while testing a replacement. The public unnotarized package also uses an ad-hoc signature, so updates can require renewed privacy permissions. Developer ID signing and notarization remain an optional future distribution route; they are not required for source builds or explicitly unnotarized downloads.
 
 ## First launch
 

@@ -71,12 +71,15 @@ Tests/InterfaceLanguageTests.swift
 Tests/LanguageTests.swift
 Tests/NotesTests.swift
 Tests/ProductTests.swift
+Tests/ReleasePackagingTests.py
 Tests/SetupTests.swift
 Tests/SourceTests.swift
 Tests/main.swift
 config/WordNest.entitlements
 config/product.env
 config/source-files.txt
+docs/INSTALL.md
+docs/INSTALL.zh-CN.md
 docs/RELEASING.md
 docs/code-guide.md
 docs/development-status.md

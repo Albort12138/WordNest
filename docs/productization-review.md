@@ -1,6 +1,6 @@
 # WordNest productization review
 
-Initial review: 2026-11-04. Licensing and contribution requirements updated on 2026-11-07 for the MIT open-source model. Findings and release criteria follow. Recommendations are not evidence that a feature or distribution step has shipped.
+Initial review: 2026-11-04. Licensing and contribution requirements updated on 2026-11-07 for the MIT open-source model. The 2026-11-08 distribution decision selects explicitly labeled unnotarized packages without paid developer membership; the release criteria below reflect that route. Findings and release criteria follow. Recommendations are not evidence that a feature or distribution step has shipped.
 
 ## Marketing and positioning review
 
@@ -18,7 +18,7 @@ Screen OCR, local dictionary and speech services, original-line retention, nativ
 | --- | --- | --- |
 | P0 | Licensing must match the open-source promise. | Use MIT consistently in the repository, app, source export and installers, with required notices and no separate authorization fee. |
 | P0 | “Completely local” can hide Notes synchronization. | Separate WordNest's local processing from provider-controlled Notes sync. Explain On My Mac versus iCloud. |
-| P0 | A download link can imply an installer exists. | Mark the first signed/notarized release pending until actually published and tested. |
+| P0 | A download link can imply an installer exists. | Mark the first public download pending until published and tested; disclose unnotarized status before download. |
 | P1 | Candidate paths and test histories obscure user workflow. | Lead with scenario, install, setup, use, privacy, compatibility, and licensing. Keep evidence in developer docs. |
 | P1 | English docs can imply English UI. | Document system-default, English and Simplified Chinese interface selection. Provide equivalent English and Chinese READMEs. |
 | P1 | Multilingual OCR can imply multilingual Chinese translation. | Describe OCR models, installed dictionaries, and system voices separately. |
@@ -30,7 +30,7 @@ Screen OCR, local dictionary and speech services, original-line retention, nativ
 
 English is the default README with an equivalent Chinese version. Neither includes personal paths or private collection examples. PRIVACY.md explains capture scope, source metadata, Notes account sync, local transaction metadata, exports, permissions, and removal.
 
-The DMG workflow is pending the first signed release. Source builds are explicitly ad-hoc signed. No price, support SLA, compatibility certification, or publication result is invented.
+The DMG workflow defaults to an explicitly unnotarized draft; the first public download is pending. Source builds are explicitly ad-hoc signed. No price, support SLA, compatibility certification, or publication result is invented.
 
 ### Evidence and sources
 
@@ -43,7 +43,7 @@ Apple documents [iCloud Notes behavior](https://support.apple.com/en-mide/guide/
 ### Release acceptance checks
 
 - A first-time visitor understands the scenario and shortcut-to-Notes workflow before implementation details.
-- A non-developer can distinguish pending release, signed installer, and source build.
+- A non-developer can distinguish pending release, unnotarized download, optional notarized installer, and source build.
 - Privacy copy does not promise an iCloud notebook remains only on the Mac.
 - Compatibility distinguishes targets, tests, and experimental scenarios.
 - The MIT License and copyright notice are visible before reuse.
@@ -56,7 +56,7 @@ This perspective reviews the implemented interaction and platform boundaries, no
 | Priority | Finding | Product response / remaining gate |
 | --- | --- | --- |
 | P0 | Permissions spread across developer-oriented menu actions make first use difficult. | Guide first launch, request consent only through explicit actions, and keep later recovery in settings. Verify actual process capability after returning from macOS settings. |
-| P0 | An installed name and enabled switch do not prove the current binary is authorized. | Use a stable product identity and Developer ID release signing. Test a real downloaded installation and upgrade before publication. |
+| P0 | An installed name and enabled switch do not prove the current binary is authorized. | Keep the product identity stable, disclose ad-hoc signature changes, and test renewed grants on a real downloaded installation and upgrade. Developer ID signing remains optional. |
 | P0 | Installation cannot approve privacy rights automatically. | Say first-launch setup, retain user-controlled system consent, and allow honest deferred completion. |
 | P1 | Sources and Notes are valuable but not necessary to understand the lookup loop. | Make optional integrations skippable; keep lookup usable once capture permission works. |
 | P1 | Multiple preview instances can fight for the same shortcut. | A second normal launch should reveal the existing product rather than register another hotkey. Keep development fixtures intentionally separate. |

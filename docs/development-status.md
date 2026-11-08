@@ -1,6 +1,10 @@
 # Development status
 
-Updated: 2026-11-07. Current source version: **26.1.0 release candidate, build 1**. This document describes implementation and release readiness; it is not a release announcement.
+Updated: 2026-11-08. Current source version: **26.1.0 release candidate, build 1**. This document describes implementation and release readiness; it is not a release announcement.
+
+## Unnotarized distribution policy
+
+The maintainer selected free, explicitly unnotarized public distribution without paid Apple developer membership. Public package mode `--unsigned` forces ad-hoc signing, requires a clean committed source tree and includes bilingual installation guides, a warning file and `-unnotarized` artifact names. The manual GitHub draft workflow defaults to this mode without Apple secrets. Optional Developer ID signing/notarization still fails closed if explicitly selected without credentials. Actual public download, clean-machine Gatekeeper approval and permission/upgrade acceptance remain pending; policy and packaging support do not establish those results.
 
 ## GitHub CI and local demonstration follow-up
 
@@ -75,7 +79,7 @@ These are local candidate checks, not a notarized release, a completed GitHub Ac
 | Interface language | System default, Simplified Chinese and English implemented; fixture/layout checks passed; interactive Chinese/English switching and language persistence across in-app restart passed |
 | New first-launch UI | Same-path in-app restart restored the saved step and language; real consent, system-driven restart and clean-machine acceptance pending |
 | Local preview packages | Development-signed DMG/ZIP generated and locally verified; not official distribution |
-| Developer ID signing and notarization | Required for official distribution; completed release pending |
+| Developer ID signing and notarization | Optional future route; not used for the first unnotarized distribution |
 | Fresh-machine download/install/upgrade | Pending |
 | Player fullscreen and native macOS fullscreen | Experimental; no general guarantee |
 | External displays and alternate scaling | Pending acceptance matrix |
@@ -85,6 +89,6 @@ These are local candidate checks, not a notarized release, a completed GitHub Ac
 
 ## Before publication
 
-Complete the five-step manual gate in [validation-plan.md](validation-plan.md), run the current build/test workflow, and record results against the exact artifact. Publish only a signed and notarized release that passes installation checks. Locally packaged unsigned previews must remain clearly labeled as such.
+Complete the five-step manual gate in [validation-plan.md](validation-plan.md), run the current build/test workflow, and record results against the exact artifact. Publish only the declared distribution mode after installation checks. The chosen public route must be explicitly labeled unnotarized; local dirty previews remain distinct from public packages. Signed mode additionally requires Developer ID and Apple notarization.
 
 Keep test notebooks, captures, exports, personal paths, signing diagnostics and credentials out of source control. Private development history and local artifacts are excluded from public documentation. Do not publish source or releases solely because packaging scripts exist.

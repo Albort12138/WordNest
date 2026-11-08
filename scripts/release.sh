@@ -4,10 +4,13 @@ project_dir="$(cd "$(dirname "$0")/.." && pwd)"
 # shellcheck source=../config/product.env
 source "$project_dir/config/product.env"
 package_mode=release
+if [[ "$#" -gt 1 ]]; then printf 'Pass exactly one packaging mode.\n' >&2; exit 2; fi
 case "${1:-}" in
+  --unsigned) package_mode=unsigned ;;
+  --signed) package_mode=release ;;
   --unsigned-preview) package_mode=unsigned-preview ;;
   '') ;;
-  *) printf 'Usage: bash scripts/release.sh [--unsigned-preview]\n' >&2; exit 2 ;;
+  *) printf 'Usage: bash scripts/release.sh [--unsigned|--signed|--unsigned-preview]\n' >&2; exit 2 ;;
 esac
 signing_identity="${SUBTITLE_LOOKUP_SIGNING_IDENTITY:--}"
 notary_profile="${WORDNEST_NOTARY_PROFILE:-}"
@@ -29,8 +32,8 @@ if [[ "$(git -C "$project_dir" rev-parse --show-toplevel 2>/dev/null || true)" =
     source_state=clean
   fi
 fi
-if [[ "$package_mode" == release && "$source_state" != clean ]]; then
-  printf 'Official release packaging requires a clean committed source checkout. Current state: %s\n' "$source_state" >&2
+if [[ "$package_mode" != unsigned-preview && "$source_state" != clean ]]; then
+  printf 'Public release packaging requires a clean committed source checkout. Current state: %s\n' "$source_state" >&2
   exit 2
 fi
 source_digest() {
@@ -47,7 +50,7 @@ print(digest.hexdigest())
 PYDIGEST
 }
 source_sha256="$(source_digest)"
-for name in LICENSE NOTICE PRIVACY.md THIRD-PARTY-NOTICES.md Assets/Branding/LICENSE; do
+for name in LICENSE NOTICE PRIVACY.md THIRD-PARTY-NOTICES.md Assets/Branding/LICENSE docs/INSTALL.md docs/INSTALL.zh-CN.md; do
   if [[ ! -f "$project_dir/$name" ]]; then printf 'Missing required distribution document: %s\n' "$name" >&2; exit 2; fi
 done
 output_dir="${WORDNEST_RELEASE_DIR:-$project_dir/work/releases}"
@@ -67,6 +70,7 @@ PY
 )"
 suffix=''
 if [[ "$package_mode" == unsigned-preview ]]; then suffix=-unsigned-preview; fi
+if [[ "$package_mode" == unsigned ]]; then suffix=-unnotarized; fi
 base="WordNest-$WORDNEST_VERSION-build$WORDNEST_BUILD_NUMBER-macos-$WORDNEST_ARCH$suffix"
 for name in "$base.dmg" "$base.zip" "$base-SHA256SUMS.txt" "$base-build-info.txt"; do
   if [[ -e "$output_dir/$name" ]]; then printf 'Refusing to overwrite package: %s\n' "$output_dir/$name" >&2; exit 2; fi
@@ -85,9 +89,21 @@ for document in LICENSE NOTICE PRIVACY.md THIRD-PARTY-NOTICES.md; do
   cp "$project_dir/$document" "$payload/$document"
 done
 cp "$project_dir/Assets/Branding/LICENSE" "$payload/WordNest-artwork-LICENSE.txt"
+cp "$project_dir/docs/INSTALL.md" "$payload/INSTALL.md"
+cp "$project_dir/docs/INSTALL.zh-CN.md" "$payload/INSTALL.zh-CN.md"
 ln -s /Applications "$payload/Applications"
 if [[ "$package_mode" == unsigned-preview ]]; then
   printf 'LOCAL UNSIGNED PREVIEW\nThis package is ad-hoc signed, not Apple-notarized, and is not an official release.\nDo not disable macOS security protections.\n' > "$payload/UNSIGNED-PREVIEW.txt"
+fi
+if [[ "$package_mode" == unsigned ]]; then
+  cat > "$payload/UNNOTARIZED.txt" <<'WARNING'
+UNNOTARIZED OPEN-SOURCE DISTRIBUTION
+This app is ad-hoc signed. It is NOT Developer ID-signed or notarized by Apple.
+macOS may block the first launch. Read INSTALL.md or INSTALL.zh-CN.md before installing.
+Only approve an app-specific exception if you trust the source. Do not disable Gatekeeper,
+remove quarantine attributes, or ignore malware/damage warnings.
+Updates may require renewed macOS privacy permissions. No developer membership is required.
+WARNING
 fi
 notarize() {
   local artifact="$1"
@@ -111,7 +127,7 @@ if [[ "$package_mode" == release ]]; then
   codesign --verify --deep --strict "$staging_app"
   spctl --assess --type execute --verbose=2 "$staging_app"
 fi
-# ZIP contains the same stapled app as the DMG, plus license/privacy documents.
+# ZIP contains the same app as the DMG, plus installation and license/privacy documents.
 ditto -c -k --sequesterRsrc "$payload" "$staging_dir/$base.zip"
 hdiutil create -volname WordNest -srcfolder "$payload" -format UDZO "$staging_dir/$base.dmg" >/dev/null
 hdiutil verify "$staging_dir/$base.dmg" >/dev/null
@@ -130,8 +146,10 @@ if [[ "$(source_digest)" != "$source_sha256" ]]; then
   printf 'Public source changed during packaging; no artifacts were published. Rebuild the candidate.\n' >&2
   exit 2
 fi
+if [[ "$package_mode" == release ]]; then signing_mode=developer-id; notarized=yes; else signing_mode=ad-hoc; notarized=no; fi
+printf 'signing=%s\nnotarized=%s\n' "$signing_mode" "$notarized" > "$staging_dir/$base-build-info.txt"
 printf 'product=WordNest\nversion=%s\nbuild=%s\narchitecture=%s\nbundle_id=%s\npackage_mode=%s\nsource_revision=%s\nsource_state=%s\nsource_sha256=%s\n' \
-  "$WORDNEST_VERSION" "$WORDNEST_BUILD_NUMBER" "$WORDNEST_ARCH" "$WORDNEST_BUNDLE_ID" "$package_mode" "$revision" "$source_state" "$source_sha256" > "$staging_dir/$base-build-info.txt"
+  "$WORDNEST_VERSION" "$WORDNEST_BUILD_NUMBER" "$WORDNEST_ARCH" "$WORDNEST_BUNDLE_ID" "$package_mode" "$revision" "$source_state" "$source_sha256" >> "$staging_dir/$base-build-info.txt"
 for name in "$base.dmg" "$base.zip" "$base-SHA256SUMS.txt" "$base-build-info.txt"; do
   mv "$staging_dir/$name" "$output_dir/$name"
 done

@@ -1,4 +1,4 @@
-name: Prepare signed draft release
+name: Prepare draft release
 on:
   workflow_dispatch:
     inputs:
@@ -6,10 +6,18 @@ on:
         description: Existing release tag matching config/product.env (for example v26.1.0)
         required: true
         type: string
+      distribution:
+        description: Explicit distribution mode; unsigned needs no Apple membership or secrets
+        required: true
+        type: choice
+        default: unsigned
+        options:
+          - unsigned
+          - signed
 permissions:
   contents: read
 concurrency:
-  group: signed-release
+  group: wordnest-release
   cancel-in-progress: false
 jobs:
   release:
@@ -21,12 +29,14 @@ jobs:
       contents: write
     env:
       RELEASE_TAG: ${{ inputs.tag }}
+      DISTRIBUTION: ${{ inputs.distribution }}
     steps:
       - name: Validate release request
         shell: bash
         run: |
           set -euo pipefail
           [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'An existing vYY.FEATURE.FIX tag is required.' >&2; exit 2; }
+          [[ "$DISTRIBUTION" == unsigned || "$DISTRIBUTION" == signed ]] || exit 2
           test "$(uname -m)" = arm64
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -49,8 +59,10 @@ jobs:
           for script in scripts/*.sh; do bash -n "$script"; done
           bash scripts/check-source-policy.sh
           bash scripts/export-source.sh --check-only
+          python3 Tests/ReleasePackagingTests.py
           bash scripts/test.sh
       - name: Import certificate into an ephemeral keychain
+        if: inputs.distribution == 'signed'
         shell: bash
         env:
           DEVELOPER_ID_P12_BASE64: ${{ secrets.DEVELOPER_ID_P12_BASE64 }}
@@ -81,10 +93,14 @@ jobs:
           rm -f "$certificate"
           xcrun notarytool store-credentials WordNestRelease --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD" --keychain "$keychain" >/dev/null
       - name: Build, notarize, staple, verify and package
+        if: inputs.distribution == 'signed'
         env:
           SUBTITLE_LOOKUP_SIGNING_IDENTITY: ${{ secrets.DEVELOPER_ID_APPLICATION }}
           WORDNEST_NOTARY_PROFILE: WordNestRelease
-        run: bash scripts/release.sh
+        run: bash scripts/release.sh --signed
+      - name: Build explicitly unnotarized packages without Apple credentials
+        if: inputs.distribution == 'unsigned'
+        run: bash scripts/release.sh --unsigned
       - name: Create draft GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -96,15 +112,26 @@ jobs:
 
           Download the DMG, drag WordNest to Applications, and complete the first-run setup. The ZIP is an alternative package of the same app. See README for privacy and feature limitations, and verify the SHA-256 checksums.
 
-          This is a draft. The maintainer must review installation and permission behavior on a clean Mac before publishing.
+          This is a draft. The maintainer must review installation and permission behavior on a clean Mac before publishing. Installation instructions in English and Chinese are included in the package.
           NOTES
           base="WordNest-$WORDNEST_VERSION-build$WORDNEST_BUILD_NUMBER-macos-$WORDNEST_ARCH"
+          if [[ "$DISTRIBUTION" == unsigned ]]; then
+            base="$base-unnotarized"
+            cat >> "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+
+          **Unnotarized distribution:** This app is ad-hoc signed, not Developer ID-signed or notarized by Apple. macOS may block the first launch. Review the installation guide and Apple's app-specific Open Anyway instructions. Never disable Gatekeeper or remove quarantine attributes. A checksum verifies download integrity, not developer identity or Apple review. Updates may need renewed privacy permissions.
+
+          **未公证版本：** 应用使用临时签名，未经 Apple Developer ID 签名或公证，首次启动可能被 macOS 拦截。请阅读安装说明，确认来源后按 Apple 的流程为此应用选择“仍要打开”；不要关闭系统安全保护或移除隔离属性。更新后可能需要重新授权。
+          NOTES
+          else
+            printf '\nDeveloper ID-signed and notarized distribution; see the build metadata.\n' >> "$RUNNER_TEMP/release-notes.md"
+          fi
           gh release create "$RELEASE_TAG" --draft --verify-tag --title "WordNest $WORDNEST_VERSION" \
             --notes-file "$RUNNER_TEMP/release-notes.md" \
             "work/releases/$base.dmg" "work/releases/$base.zip" \
             "work/releases/$base-SHA256SUMS.txt" "work/releases/$base-build-info.txt"
       - name: Remove signing material
-        if: always()
+        if: always() && inputs.distribution == 'signed'
         run: |
           rm -f "$RUNNER_TEMP/wordnest-developer-id.p12"
           if [[ -f "$RUNNER_TEMP/wordnest-release.keychain-db" ]]; then

@@ -29,7 +29,7 @@ Default source builds have the development identity `io.github.albort12138.wordn
 4. If a stale development entry is confirmed, remove only that WordNest entry, add the current app, and enable it yourself. Leave other applications untouched.
 5. Follow macOS's restart instruction. If Quit & Reopen closes WordNest but does not launch it again, manually reopen the same copy. The app checkpoints the current step before permission requests, system-settings actions and restart actions; reopening resumes that unfinished step even if an earlier introduction was completed. Then verify the actual operation: lookup, source metadata, or explicitly selected Notes access.
 
-Ad-hoc source builds can change code identity when rebuilt. A stable identifier alone does not guarantee authorization inheritance. Official distribution should use a consistent Developer ID identity, but permission retention still needs upgrade acceptance testing. Do not reset TCC, disable Gatekeeper/SIP, or loosen signing requirements as a workaround.
+Ad-hoc source builds can change code identity when rebuilt. A stable identifier alone does not guarantee authorization inheritance. The current public route is explicitly unnotarized and ad-hoc signed, so updates may require renewed permission grants. If Developer ID distribution is added later, keep its identity consistent and still test permission retention on upgrade. Do not reset TCC, disable Gatekeeper/SIP, or loosen signing requirements as a workaround.
 
 ## Read-only development diagnostics
 

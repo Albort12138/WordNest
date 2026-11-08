@@ -25,6 +25,8 @@ jobs:
           bash scripts/check-source-policy.sh
           bash scripts/export-source.sh --check-only
           git diff --check
+      - name: Test distribution policy without signing credentials
+        run: python3 Tests/ReleasePackagingTests.py
       - name: Run local logic and fixture tests
         run: bash scripts/test.sh
       - name: Build development app
